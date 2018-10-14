@@ -41,8 +41,39 @@ def extract_names(filename):
     followed by the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
-    # +++your code here+++
-    return
+    with open(filename, 'r') as file:
+        data = file.read()
+
+    year_index_last = data.find('</h3')
+    year_index_first = year_index_last - 4
+    year = data[year_index_first:year_index_last]
+
+    year_list = [year]
+    table_line_seek = year_index_last
+
+    while True:
+        row_index_first = data.find('<tr align="right"', table_line_seek)
+        if row_index_first == -1:
+            break
+        row_index_last = data.find('\n', row_index_first)
+        row = data[row_index_first:row_index_last]
+        row_info = []
+        row_seek = 0
+        while len(row_info) < 3:
+            row_pos_first = row.find('d>', row_seek) + 2
+            row_pos_last = row.find('</td', row_seek)
+            row_info.append(row[row_pos_first:row_pos_last])
+            row_seek = row_pos_last + 4
+
+        row_info.reverse()
+        year_list.append(' '.join(row_info[::2]))
+        year_list.append(' '.join(row_info[1:3]))
+
+        table_line_seek = row_index_last
+
+    year_list.sort()
+
+    return year_list
 
 
 def main():
@@ -61,7 +92,8 @@ def main():
         summary = True
         del args[0]
 
-        # +++your code here+++
+        for arg in args:
+            print(extract_names(arg))
         # For each filename, get the names, then either print the text output
         # or write it to a summary file
 
