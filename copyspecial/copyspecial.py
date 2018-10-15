@@ -21,8 +21,12 @@ import subprocess
 """
 
 
-# +++your code here+++
-# Write functions and modify main() to call them
+def get_special_paths(dir):
+    directories = list(filter(os.path.isdir, os.listdir(dir)))
+    rcomp = re.compile('__\w+__')
+    special_dirs = list(filter(rcomp.match, directories))
+
+    return map(lambda x: os.path.abspath(x), special_dirs)
 
 
 def main():
